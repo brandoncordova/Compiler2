@@ -23,4 +23,7 @@ public class Token {
 		this.type = Type.DEFAULT;
 		this.value = "";
 	}
+	public void getInfo(){
+		System.out.println("Token:\n\tType: "+this.type+"\n\tValue: "+this.value+"\n\tPosition: Line "+(this.ypos+1)+", Character "+this.xpos);
+	}
 }

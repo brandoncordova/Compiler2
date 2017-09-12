@@ -1,4 +1,0 @@
-./C--/bin/
-./C--/.settings
-./C--/.classpath
-./C--/.project
