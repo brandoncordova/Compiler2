@@ -87,6 +87,19 @@ public class Lexar {
 						case '"':
 							addStringToken(this.line.charAt(xpos));
 							break;
+						case '+':
+						case '-':
+						case '*':
+							if(this.line.charAt(xpos+1)=='='){
+									this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos)+this.line.charAt(xpos+1),Type.OPERATOR));
+							}
+							else if (this.line.charAt(xpos+1)==this.line.charAt(xpos)){
+								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos)+this.line.charAt(xpos),Type.OPERATOR));
+							}
+							else {
+								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos),Type.OPERATOR));
+							}
+							break;
 						default:
 							if(Character.isAlphabetic((int) this.line.charAt(xpos))){
 								addWordToken(this.line.charAt(xpos));

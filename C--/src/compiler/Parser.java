@@ -5,25 +5,25 @@ import compiler.Type;
 import java.util.ArrayList;
 
 public class Parser {
+	private ArrayList<Statement> statements;
 	private ArrayList<Token> tokens;
 	private Token currentToken;
 	private LibrariesAndVars libraries = new LibrariesAndVars();
 	private int xpos = 0;
-	private int xPos;
-	private int yPos;
 	public Parser(ArrayList<Token> tokens,int xpos, int ypos){
 		this.tokens = tokens;
-		this.xPos = xpos;
-		this.yPos = ypos;
 		this.parse();
 	}
 	private void parseFunctionCall(){
 		this.xpos++;
-		if(this.tokens.get(xpos).type!=Type.PARENTHESIS){
-			System.out.println("["+this.xPos+","+this.yPos+"] Syntax error: Missing Parenthesis '('");
+		if(this.tokens.get(this.xpos).value!="("){
+			System.out.println("["+this.tokens.get(this.xpos).xpos+","+this.tokens.get(this.xpos).ypos+"] Syntax error: Missing Parenthesis '('");
 			return;
 		}
-		
+		this.xpos++;
+		while(this.tokens.get(this.xpos).value!=")"){
+			//TODO
+		}
 	}
 	private void parse(){
 		this.currentToken = this.tokens.get(xpos);
