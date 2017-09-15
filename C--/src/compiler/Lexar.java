@@ -59,6 +59,7 @@ public class Lexar {
 		}
 		catch(StringIndexOutOfBoundsException e){
 			addToken();
+			xpos++;
 			return;
 		}
 		catch(Exception e){
