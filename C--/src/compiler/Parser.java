@@ -22,6 +22,7 @@ public class Parser {
 					this.parseAssign();
 					break;
 				default:
+					
 					break;
 			}
 		}

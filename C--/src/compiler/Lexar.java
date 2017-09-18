@@ -29,8 +29,8 @@ public class Lexar {
 		this.lex();
 	}
 	private void addChar(){
-		currentToken.value+=this.line.charAt(xpos);
-		xpos++;
+		this.currentToken.value+=this.line.charAt(xpos);
+		this.xpos++;
 	}
 	private void addToken(){
 		this.tokens.add(this.currentToken);
@@ -50,30 +50,66 @@ public class Lexar {
 	}
 	private void addStringToken(char type){
 		boolean canEvaluate = true;
-		currentToken = new Token(xpos,ypos,"",Type.STRING);
-		xpos++;
+		this.currentToken = new Token(this.xpos,this.ypos,"",Type.STRING);
+		this.xpos++;
 		try {
-			while(canEvaluate&(this.line.charAt(xpos)!=type)){
-				addChar();
+			while(canEvaluate&(this.line.charAt(this.xpos)!=type)){
+				this.addChar();
 			}
 		}
 		catch(StringIndexOutOfBoundsException e){
-			addToken();
-			xpos++;
+			this.addToken();
+			this.xpos++;
 			return;
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		addToken();
+		this.xpos++;
+		this.addToken();
+	}
+	private void addNumberToken(){
+	    int c = 0;
+	    this.currentToken = new Token(this.xpos,this.ypos,"",Type.NUMBER);
+	    try {
+	    	while(Character.isDigit(this.line.charAt(this.xpos))||(c==0&&this.line.charAt(this.xpos+1)=='.')){
+	    		if(this.line.charAt(this.xpos)=='.'){
+	    			c++;
+	    		}
+	    		this.currentToken.value+=this.line.charAt(this.xpos);
+	    		//System.out.println("Value of digit: "+this.line.charAt(this.xpos));
+	    		this.xpos++;
+	    	}
+	    }catch(StringIndexOutOfBoundsException e){
+	    	this.xpos = 0;
+	    	try {
+	    		this.line = this.reader.readLine();
+	    	}catch(IOException e1){
+	    		e.printStackTrace();
+	    	}
+	    }
+	    this.addToken();
 	}
 	private void lex() {
 		try {
 			while(true){
 				try{
+					//System.out.println(this.line.charAt(xpos));
 					switch(this.line.charAt(xpos)){
 						case '\n':
 							xpos++;
+							break;
+						case '/':
+							if(this.line.charAt(xpos+1)=='/'){
+								this.xpos = 0;
+								this.line = this.reader.readLine();
+							}
+							else if(this.line.charAt(xpos+1)=='='){
+								tokens.add(new Token(this.xpos,this.ypos,"/=",Type.OPERATOR));
+							}
+							else {
+								tokens.add(new Token(this.xpos,this.ypos,"/",Type.OPERATOR));
+							}
 							break;
 						case '(':
 						case ')':
@@ -93,17 +129,37 @@ public class Lexar {
 						case '*':
 							if(this.line.charAt(xpos+1)=='='){
 									this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos)+this.line.charAt(xpos+1),Type.OPERATOR));
+									xpos+=2;
 							}
 							else if (this.line.charAt(xpos+1)==this.line.charAt(xpos)){
 								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos)+this.line.charAt(xpos),Type.OPERATOR));
+								xpos+=2;
 							}
 							else {
 								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos),Type.OPERATOR));
+							    xpos++;
+							}
+							break;
+						case ' ':
+							xpos++;
+							break;
+						case '=':
+							if(this.line.charAt(xpos+1)=='='){
+								tokens.add(new Token(this.xpos,this.ypos,"==",Type.OPERATOR));
+								xpos+=2;
+							}
+							else {
+								tokens.add(new Token(this.xpos,this.ypos,"=",Type.OPERATOR));
+								xpos++;
 							}
 							break;
 						default:
-							if(Character.isAlphabetic((int) this.line.charAt(xpos))){
-								addWordToken(this.line.charAt(xpos));
+							if(Character.isAlphabetic(this.line.charAt(xpos))){
+								this.addWordToken(this.line.charAt(xpos));
+								break;
+							}
+							else if(Character.isDigit(this.line.charAt(xpos))){
+								this.addNumberToken();
 								break;
 							}
 							System.out.println("Unknown char "+this.line.charAt(xpos));
@@ -119,6 +175,9 @@ public class Lexar {
 						return;
 					}
 				}
+				catch(IOException e1){
+					e1.printStackTrace();
+				}
 			}
 		}
 		catch(NullPointerException e){
@@ -129,5 +188,8 @@ public class Lexar {
 		for(Token token : tokens){
 			token.getInfo();
 		}
+	}
+	public ArrayList<Token> getTokens(){
+		return this.tokens;
 	}
 }
