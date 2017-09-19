@@ -39,14 +39,14 @@ public class Lexar {
 		currentToken = new Token(xpos,ypos,"",Type.WORD);
 		addChar();
 		try {
-			while((Character.isAlphabetic((int) this.line.charAt(xpos))||Character.isDigit(this.line.charAt(xpos)))){
-				addChar();
+			while((Character.isAlphabetic(this.line.charAt(this.xpos))||Character.isDigit(this.line.charAt(this.xpos)))){
+				this.addChar();
 			}
 		}
 		catch(Exception e){
 			e.printStackTrace();
 		}
-		addToken();
+		this.addToken();
 	}
 	private void addStringToken(char type){
 		boolean canEvaluate = true;
@@ -95,57 +95,57 @@ public class Lexar {
 			while(true){
 				try{
 					//System.out.println(this.line.charAt(xpos));
-					switch(this.line.charAt(xpos)){
+					switch(this.line.charAt(this.xpos)){
 						case '\n':
-							xpos++;
+							this.xpos++;
 							break;
 						case '/':
 							if(this.line.charAt(xpos+1)=='/'){
 								this.xpos = 0;
 								this.line = this.reader.readLine();
 							}
-							else if(this.line.charAt(xpos+1)=='='){
-								tokens.add(new Token(this.xpos,this.ypos,"/=",Type.OPERATOR));
+							else if(this.line.charAt(this.xpos+1)=='='){
+								this.tokens.add(new Token(this.xpos,this.ypos,"/=",Type.OPERATOR));
 							}
 							else {
-								tokens.add(new Token(this.xpos,this.ypos,"/",Type.OPERATOR));
+								this.tokens.add(new Token(this.xpos,this.ypos,"/",Type.OPERATOR));
 							}
 							break;
 						case '(':
 						case ')':
-							tokens.add(new Token(this.xpos, this.ypos, this.line.charAt(xpos)+"",Type.PARENTHESIS));
-							xpos++;
+							this.tokens.add(new Token(this.xpos, this.ypos, this.line.charAt(xpos)+"",Type.PARENTHESIS));
+							this.xpos++;
 							break;
 						case '{':
 						case '}':
-							tokens.add(new Token(this.xpos,this.ypos,this.line.charAt(xpos)+"",Type.BRACKET));
+							this.tokens.add(new Token(this.xpos,this.ypos,this.line.charAt(xpos)+"",Type.BRACKET));
 							xpos++;
 						case '\'':
 						case '"':
-							addStringToken(this.line.charAt(xpos));
+							this.addStringToken(this.line.charAt(this.xpos));
 							break;
 						case '+':
 						case '-':
 						case '*':
-							if(this.line.charAt(xpos+1)=='='){
+							if(this.line.charAt(this.xpos+1)=='='){
 									this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos)+this.line.charAt(xpos+1),Type.OPERATOR));
-									xpos+=2;
+									this.xpos+=2;
 							}
-							else if (this.line.charAt(xpos+1)==this.line.charAt(xpos)){
-								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos)+this.line.charAt(xpos),Type.OPERATOR));
-								xpos+=2;
+							else if (this.line.charAt(this.xpos+1)==this.line.charAt(this.xpos)){
+								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(this.xpos)+this.line.charAt(this.xpos),Type.OPERATOR));
+								this.xpos+=2;
 							}
 							else {
 								this.tokens.add(new Token(this.xpos,this.ypos,""+this.line.charAt(xpos),Type.OPERATOR));
-							    xpos++;
+							   	this.xpos++;
 							}
 							break;
 						case ' ':
-							xpos++;
+							this.xpos++;
 							break;
 						case '=':
-							if(this.line.charAt(xpos+1)=='='){
-								tokens.add(new Token(this.xpos,this.ypos,"==",Type.OPERATOR));
+							if(this.line.charAt(this.xpos+1)=='='){
+								this.tokens.add(new Token(this.xpos,this.ypos,"==",Type.OPERATOR));
 								xpos+=2;
 							}
 							else {
@@ -154,8 +154,8 @@ public class Lexar {
 							}
 							break;
 						default:
-							if(Character.isAlphabetic(this.line.charAt(xpos))){
-								this.addWordToken(this.line.charAt(xpos));
+							if(Character.isAlphabetic(this.line.charAt(this.xpos))){
+								this.addWordToken(this.line.charAt(this.xpos));
 								break;
 							}
 							else if(Character.isDigit(this.line.charAt(xpos))){
@@ -169,7 +169,7 @@ public class Lexar {
 				catch(StringIndexOutOfBoundsException e){
 					try {
 						this.line = this.reader.readLine();
-						xpos = 0;
+						this.xpos = 0;
 					}
 					catch(IOException e1){
 						return;
@@ -185,7 +185,7 @@ public class Lexar {
 		}
 	}
 	public void listTokens(){
-		for(Token token : tokens){
+		for(Token token : this.tokens){
 			token.getInfo();
 		}
 	}
